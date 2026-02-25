@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT'S FINE.</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #050a14;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #c8d8f0;
+      position: relative;
+    }
+
+    /* ── SKY GRADIENT ── */
+    .sky {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom, #050a14 0%, #0d1a2e 50%, #1a1a2e 100%);
+      z-index: 0;
+    }
+
+    /* ── CLOUDS ── */
+    .clouds {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 220px;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      border-radius: 50%;
+      background: #0e1728;
+      animation: drift linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateX(-300px); }
+      to   { transform: translateX(calc(100vw + 300px)); }
+    }
+
+    /* ── RAIN ── */
+    .rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .drop {
+      position: absolute;
+      width: 1.5px;
+      border-radius: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(130, 170, 255, 0.55));
+      animation: fall linear infinite;
+      transform: rotate(8deg);
+    }
+
+    @keyframes fall {
+      from { top: -80px; }
+      to   { top: 110vh; }
+    }
+
+    /* ── LIGHTNING OVERLAY ── */
+    #lightning {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      background: transparent;
+      transition: background 0.04s ease;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      position: relative;
+      z-index: 4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px 80px;
+      text-align: center;
+    }
+
+    /* ── MAIN TITLE ── */
+    .storm-icon {
+      font-size: 4.5rem;
+      line-height: 1;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: sway 3s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 18px rgba(130, 170, 255, 0.5));
+    }
+
+    @keyframes sway {
+      from { transform: rotate(-6deg) scale(1); }
+      to   { transform: rotate(6deg) scale(1.05); }
+    }
+
+    h1 {
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+      text-shadow:
+        0 0 10px rgba(160, 200, 255, 0.9),
+        0 0 30px rgba(100, 150, 255, 0.6),
+        0 0 60px rgba(80, 120, 255, 0.3);
+      animation: titleFlicker 9s infinite;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    @keyframes titleFlicker {
+      0%, 92%, 94%, 96%, 100% { opacity: 1; }
+      93% { opacity: 0.7; }
+      95% { opacity: 0.9; }
+    }
+
+    .byline {
+      font-size: 0.85rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #4e6a99;
+      margin-bottom: 44px;
+    }
+
+    /* ── MESSAGE CARD ── */
+    .card {
+      max-width: 680px;
+      width: 100%;
+      background: rgba(6, 12, 30, 0.88);
+      border: 1px solid rgba(80, 120, 220, 0.25);
+      border-radius: 6px;
+      padding: 44px 48px;
+      box-shadow:
+        0 0 40px rgba(40, 80, 180, 0.15),
+        0 0 2px rgba(80, 120, 255, 0.4),
+        inset 0 1px 0 rgba(120, 160, 255, 0.08);
+      position: relative;
+    }
+
+    .card::before,
+    .card::after {
+      content: '⚡';
+      position: absolute;
+      top: -18px;
+      font-size: 1.4rem;
+      filter: drop-shadow(0 0 6px rgba(180, 210, 255, 0.8));
+    }
+
+    .card::before { left: 20px; }
+    .card::after  { right: 20px; }
+
+    .card p {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #b8cce8;
+      margin-bottom: 22px;
+    }
+
+    .card p:last-of-type {
+      margin-bottom: 0;
+    }
+
+    em {
+      font-style: italic;
+      color: #d0dfff;
+    }
+
+    strong {
+      color: #e8f0ff;
+      font-weight: bold;
+    }
+
+    .all-caps {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.95em;
+      color: #8aaae0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(80, 120, 220, 0.2);
+      margin: 28px 0;
+    }
+
+    .signature {
+      font-size: 0.88rem;
+      color: #3d5580;
+      font-style: italic;
+      margin-top: 28px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 40px;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #263347;
+    }
+
+    /* ── SCROLLING TICKER ── */
+    .ticker-wrap {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(5, 10, 25, 0.95);
+      border-top: 1px solid rgba(80, 120, 220, 0.2);
+      overflow: hidden;
+      z-index: 5;
+      padding: 8px 0;
+    }
+
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 22s linear infinite;
+      gap: 0;
+    }
+
+    .ticker span {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #3d5580;
+      padding-right: 80px;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sky"></div>
+<div class="clouds" id="clouds"></div>
+<div class="rain-container" id="rain"></div>
+<div id="lightning"></div>
+
+<div class="content">
+
+  <div class="storm-icon">⛈️</div>
+  <h1>IT'S FINE.</h1>
+  <p class="byline">An official communiqué from Natalie</p>
+
+  <div class="card">
+    <p>
+      If you are reading this, you have recently received something from Natalie —
+      a message, an image, a gif, perhaps a frog with a firearm —
+      that may have registered somewhere on the spectrum between
+      <em>"extremely direct"</em> and <em>"I should check on her."</em>
+    </p>
+
+    <p>
+      <span class="all-caps">You do not need to check on her.</span>
+    </p>
+
+    <hr class="divider">
+
+    <p>
+      What you witnessed was simply Natalie expressing herself at her <strong>natural intensity</strong> —
+      a force that, whether delivered as a strongly worded sentence, a pointed reaction,
+      or a cartoon character doing something that felt oddly specific,
+      was intended in the spirit of <em>humor, camaraderie, and general workplace enthusiasm.</em>
+    </p>
+
+    <p>
+      The image was not a threat assessment. The message was not a warning shot.
+      It was a <em>normal form of communication</em> from someone whose
+      expressive range simply runs a little hotter than average, which is,
+      by all accounts, a <strong>feature, not a bug.</strong>
+    </p>
+
+    <hr class="divider">
+
+    <p>
+      She means it in a humorous way. She appreciates your concern.
+      No alarms need to be raised.
+      <span class="all-caps">The building is fine. You are fine. We are all fine.</span>
+    </p>
+
+    <p>
+      You may now return to your regularly scheduled afternoon.
+      Natalie will continue to be exactly like this.
+    </p>
+
+    <div class="signature">
+      — Natalie, who is, to be very clear, doing <em>great</em> ⚡
+    </div>
+  </div>
+
+  <p class="footer">sent with urgency &nbsp;·&nbsp; but also warmth</p>
+
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <span>ALL IS WELL &nbsp;⚡&nbsp; NO CAUSE FOR ALARM &nbsp;⚡&nbsp; NATALIE IS FINE &nbsp;⚡&nbsp; THE GIF WAS A JOKE &nbsp;⚡&nbsp; EVERYTHING IS NORMAL &nbsp;⚡&nbsp; PLEASE STAND BY &nbsp;⚡&nbsp; WE REPEAT: EVERYTHING IS FINE &nbsp;⚡&nbsp; THE FROG WAS NOT A MESSAGE &nbsp;⚡&nbsp; THIS HAS BEEN A NORMAL COMMUNICATION &nbsp;⚡&nbsp;</span>
+    <span>ALL IS WELL &nbsp;⚡&nbsp; NO CAUSE FOR ALARM &nbsp;⚡&nbsp; NATALIE IS FINE &nbsp;⚡&nbsp; THE GIF WAS A JOKE &nbsp;⚡&nbsp; EVERYTHING IS NORMAL &nbsp;⚡&nbsp; PLEASE STAND BY &nbsp;⚡&nbsp; WE REPEAT: EVERYTHING IS FINE &nbsp;⚡&nbsp; THE FROG WAS NOT A MESSAGE &nbsp;⚡&nbsp; THIS HAS BEEN A NORMAL COMMUNICATION &nbsp;⚡&nbsp;</span>
+  </div>
+</div>
+
+<script>
+  // ── RAIN ──
+  const rainEl = document.getElementById('rain');
+  for (let i = 0; i < 140; i++) {
+    const d = document.createElement('div');
+    d.className = 'drop';
+    const h = Math.random() * 70 + 20;
+    d.style.cssText = `
+      left: ${Math.random() * 100}%;
+      height: ${h}px;
+      animation-duration: ${(Math.random() * 0.6 + 0.35).toFixed(2)}s;
+      animation-delay: ${-(Math.random() * 4).toFixed(2)}s;
+      opacity: ${(Math.random() * 0.5 + 0.3).toFixed(2)};
+    `;
+    rainEl.appendChild(d);
+  }
+
+  // ── CLOUDS ──
+  const cloudEl = document.getElementById('clouds');
+  const cloudDefs = [
+    { w: 380, h: 90,  top: 10, dur: 38 },
+    { w: 260, h: 65,  top: 55, dur: 28 },
+    { w: 440, h: 110, top: 0,  dur: 45 },
+    { w: 200, h: 55,  top: 80, dur: 22 },
+    { w: 310, h: 80,  top: 30, dur: 33 },
+    { w: 500, h: 120, top: 5,  dur: 50 },
+  ];
+  cloudDefs.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'cloud';
+    el.style.cssText = `
+      width: ${c.w}px;
+      height: ${c.h}px;
+      top: ${c.top}px;
+      animation-duration: ${c.dur}s;
+      animation-delay: ${-(Math.random() * c.dur).toFixed(1)}s;
+      opacity: ${(Math.random() * 0.25 + 0.55).toFixed(2)};
+    `;
+    cloudEl.appendChild(el);
+  });
+
+  // ── LIGHTNING ──
+  const lt = document.getElementById('lightning');
+
+  function strike() {
+    const flashes = Math.random() < 0.4 ? 3 : 1;
+    let t = 0;
+    for (let i = 0; i < flashes; i++) {
+      const on  = t;
+      const off = t + 60 + Math.random() * 40;
+      setTimeout(() => { lt.style.background = `rgba(180,210,255,${(Math.random() * 0.25 + 0.08).toFixed(2)})`; }, on);
+      setTimeout(() => { lt.style.background = 'transparent'; }, off);
+      t = off + Math.random() * 160 + 80;
+    }
+    setTimeout(strike, Math.random() * 6000 + 2500);
+  }
+  setTimeout(strike, 1200);
+</script>
+
+</body>
+</html>
